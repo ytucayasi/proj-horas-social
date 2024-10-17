@@ -36,26 +36,37 @@ final class ActividadTable extends PowerGridComponent
     public function datasource(): Builder
     {
         $query = Actividad::query();
-        if (!$this->userIsAdmin()) {
-            $userRoles = Auth::user()->roles->pluck('name')->toArray();
-            $query->whereHas('user.roles', function ($q) use ($userRoles) {
-                $q->whereIn('name', $userRoles);
+
+        if (!$this->userIsSuperAdmin()) {
+            $escuelaIds = $this->getUserEscuelas();
+            $query->whereHas('user.roles.escuela', function ($q) use ($escuelaIds) {
+                $q->whereIn('escuelas.id', $escuelaIds);
             });
         }
+
         return $query;
     }
 
-    private function userIsAdmin(): bool
+    private function userIsSuperAdmin(): bool
     {
-        return Auth::user()->hasAnyRole(self::ADMIN_ROLES);
+        return Auth::user()->hasRole(['Super Admin', 'Admin']);
+    }
+
+    private function getUserEscuelas(): array
+    {
+        return Auth::user()->roles()->pluck('escuela_id')->unique()->filter()->values()->toArray();
     }
 
     private function canAccessActividad(Actividad $actividad): bool
     {
-        return $this->userIsAdmin() ||
-            Auth::user()->roles->pluck('name')
-                ->intersect($actividad->user->roles->pluck('name'))
-                ->isNotEmpty();
+        if ($this->userIsSuperAdmin()) {
+            return true;
+        }
+
+        $userEscuelas = $this->getUserEscuelas();
+        $actividadEscuelas = $actividad->user->roles()->pluck('escuela_id')->unique()->filter()->values()->toArray();
+
+        return !empty(array_intersect($userEscuelas, $actividadEscuelas));
     }
 
     private function checkPermissionAndAccess(string $permission, Actividad $actividad): bool
@@ -63,6 +74,9 @@ final class ActividadTable extends PowerGridComponent
         return Auth::user()->can($permission . ' ' . $this->moduleName) &&
             $this->canAccessActividad($actividad);
     }
+
+
+
 
     public function deleteActividad($id)
     {

@@ -21,9 +21,9 @@ Volt::route('roles', 'admin.base.role')->middleware(['auth', 'permission:mostrar
 Volt::route('permisos', 'admin.base.permission')->middleware(['auth', 'permission:mostrar permisos'])->name('permisos');
 
 /* General */
-Volt::route('/estudiantes', 'admin.estudiante')->middleware(['auth'])->name('estudiantes');
-Volt::route('/actividades', 'admin.actividad')->middleware(['auth'])->name('actividades');
-Volt::route('/escuelas', 'admin.escuela')->middleware(['auth'])->name('escuelas');
-Volt::route('/periodos', 'admin.periodo')->middleware(['auth'])->name('periodos');
+Volt::route('/estudiantes', 'admin.estudiante')->middleware(['auth', 'permission:mostrar estudiantes'])->name('estudiantes');
+Volt::route('/actividades', 'admin.actividad')->middleware(['auth', 'permission:mostrar actividades'])->name('actividades');
+Volt::route('/escuelas', 'admin.escuela')->middleware(['auth', 'permission:mostrar escuelas'])->name('escuelas');
+Volt::route('/periodos', 'admin.periodo')->middleware(['auth', 'permission:mostrar periodos'])->name('periodos');
 
 require __DIR__ . '/auth.php';

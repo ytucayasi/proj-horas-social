@@ -27,14 +27,30 @@ class extends Component {
                 'name' => $periodo->nombre,
             ];
         });
-        $this->escuelas = Escuela::all()->map(function ($escuela) {
-            return [
-                'id' => $escuela->id,
-                'name' => $escuela->nombre,
-            ];
-        });
+        
+        $user = Auth::user();
+        
+        if ($user->hasRole(['Super Admin', 'Admin'])) {
+            // Si es Super Admin o Admin, puede ver todas las escuelas
+            $this->escuelas = Escuela::all()->map(function ($escuela) {
+                return [
+                    'id' => $escuela->id,
+                    'name' => $escuela->nombre,
+                ];
+            });
+        } else {
+            // Para otros roles, obtener las escuelas asociadas a los roles del usuario
+            $userRoles = $user->roles()->pluck('name');
+            $this->escuelas = Escuela::whereHas('roles', function($query) use ($userRoles) {
+                $query->whereIn('name', $userRoles);
+            })->get()->map(function ($escuela) {
+                return [
+                    'id' => $escuela->id,
+                    'name' => $escuela->nombre,
+                ];
+            });
+        }
     }
-
     #[On('createEstudiante')]
     public function open()
     {
