@@ -163,6 +163,12 @@ final class ActividadTable extends PowerGridComponent
             ->add('publicado', function ($item) use ($publicados) {
                 $publicado = collect($publicados)->firstWhere('id', $item->publicado);
                 return $publicado ? $publicado['name'] : $item->publicado;
+            })
+            ->add('usuario', function ($item) {
+                return $item->user->name;
+            })
+            ->add('escuelas', function ($item) {
+                return $item->user->roles->pluck('escuela.nombre')->unique()->implode(', ');
             });
     }
 
@@ -178,6 +184,10 @@ final class ActividadTable extends PowerGridComponent
             Column::make('Fecha Fin', 'fecha_fin')
                 ->sortable(),
             Column::make('Horario', 'horas')
+                ->sortable(),
+            Column::make('Usuario', 'usuario')
+                ->sortable(),
+            Column::make('Escuelas', 'escuelas')
                 ->sortable(),
             Column::make('Estado', 'publicado')
                 ->sortable(),

@@ -1,0 +1,3 @@
+El modulo de actividades tiene que estar 
+relacionado con escuelas y no con usuarios, el modulo de usuarios esta relacionado con escuela_id (escuelas)
+el modulo de roles no debe de estar relacionado con escuelas (sacar escuela_id)

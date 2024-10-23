@@ -43,7 +43,7 @@ class extends Component
             // Modificamos la consulta de actividades para incluir todas las relacionadas con las escuelas del usuario
             $actividadCount = Actividad::whereHas('user.roles', function ($query) use ($escuelaIds) {
                 $query->whereIn('escuela_id', $escuelaIds);
-            })->count();
+            })->count();    
             
             $actividades = Actividad::whereHas('user.roles', function ($query) use ($escuelaIds) {
                 $query->whereIn('escuela_id', $escuelaIds);

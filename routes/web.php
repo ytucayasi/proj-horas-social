@@ -13,6 +13,8 @@ use Livewire\Volt\Volt;
 
 Volt::route('/', 'inicio')->name('inicio');
 Volt::route('/dashboard', 'dashboard')->middleware(['auth'])->name('dashboard');
+Volt::route('/graficos', 'dashboard2')->middleware(['auth'])->name('dashboard2');
+Volt::route('/graficos2', 'dashboard3')->middleware(['auth'])->name('dashboard3');
 Volt::route('info', 'info')->middleware(['auth'])->name('info');
 
 /* Admin */

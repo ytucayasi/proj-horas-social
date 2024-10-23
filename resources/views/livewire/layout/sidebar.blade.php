@@ -19,6 +19,12 @@ new class extends Component {
             <!-- Dashboard e Info -->
             <x-link-style :link="route('dashboard')" :label="'Dashboard'" :active="request()->routeIs('dashboard')"
                 wire:navigate />
+            @if(auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Super Admin'))
+                <x-link-style :link="route('dashboard2')" :label="'Gráficos'" :active="request()->routeIs('dashboard2')"
+                    wire:navigate />
+                <x-link-style :link="route('dashboard3')" :label="'Gráficos 2'" :active="request()->routeIs('dashboard3')"
+                    wire:navigate />
+            @endif
             @foreach (config('sidebar') as $group)
                         @php
                             $mostrarGrupo = false;
