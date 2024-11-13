@@ -20,10 +20,10 @@ new class extends Component {
             <x-link-style :link="route('dashboard')" :label="'Dashboard'" :active="request()->routeIs('dashboard')"
                 wire:navigate />
             @if(auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Super Admin'))
-                <x-link-style :link="route('dashboard2')" :label="'Gráficos'" :active="request()->routeIs('dashboard2')"
-                    wire:navigate />
-                <x-link-style :link="route('dashboard3')" :label="'Gráficos 2'" :active="request()->routeIs('dashboard3')"
-                    wire:navigate />
+                <x-link-style :link="route('panel-control')" :label="'Panel de Control'"
+                    :active="request()->routeIs('panel-control')" />
+                <x-link-style :link="route('logs')" :label="'Logs'"
+                    :active="request()->routeIs('logs')" />
             @endif
             @foreach (config('sidebar') as $group)
                         @php

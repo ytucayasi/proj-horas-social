@@ -17,8 +17,11 @@ class extends Component {
     public string $modelName = 'Estudiante';
     public bool $modal = false;
     public bool $modalDelete = false;
+    public bool $modalActividades = false;
     public $periodos = [];
     public $escuelas = [];
+    public $actividades = [];
+    public $estudiante = [];
 
     public function mount() {
         $this->periodos = Periodo::all()->map(function ($periodo) {
@@ -65,6 +68,14 @@ class extends Component {
         $this->estudianteForm->setEstudiante($estudiante);
         $this->modal = true;
     }
+
+    #[On('mostrarActividades')]
+    public function mostrarActividades(Estudiante $estudiante) {
+        $this->estudianteForm->setEstudiante($estudiante);
+        $this->estudiante = $this->estudianteForm->estudiante;
+        $this->actividades = $this->estudianteForm->estudiante->estudianteActividades()->with('actividad')->get();
+        $this->modalActividades = true;
+    } 
 
     #[On('deleteEstudiante')]
     public function removeEstudiante(Estudiante $estudiante)
@@ -149,6 +160,51 @@ class extends Component {
                     <x-button flat negative label="Eliminar" wire:click="delete" />
                 </div>
             </div>
+        </x-card>
+    </x-modal>
+    <x-modal wire:model="modalActividades" width="6xl">
+        <x-card title="Actividades del Estudiante">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Motivo</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha Inicio</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha Fin</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Horas</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @forelse ($actividades as $estudianteActividad)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $estudianteActividad->actividad->motivo }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $estudianteActividad->actividad->fecha_inicio ? \Carbon\Carbon::parse($estudianteActividad->actividad->fecha_inicio)->format('d/m/Y') : 'N/A' }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $estudianteActividad->actividad->fecha_fin ? \Carbon\Carbon::parse($estudianteActividad->actividad->fecha_fin)->format('d/m/Y') : 'N/A' }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $estudianteActividad->horas }} horas
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                    No hay actividades registradas
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            <x-slot name="footer">
+                <div class="flex justify-end gap-x-2">
+                    <x-button flat label="Cerrar" x-on:click="close" />
+                </div>
+            </x-slot>
         </x-card>
     </x-modal>
     <x-modal-card title="{{($estudianteForm->id ? 'Editar' : 'Registrar') . ' ' . $modelName}}" wire:model="modal"

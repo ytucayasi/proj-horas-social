@@ -14,13 +14,12 @@ class Estudiante extends Model
     {
         return $this->belongsTo(Periodo::class);
     }
-
     public function escuela()
     {
         return $this->belongsTo(Escuela::class);
     }
     public function estudianteActividades()
     {
-        return $this->hasMany(EstudianteActividad::class, 'estudiante_id');
+        return $this->hasMany(EstudianteActividad::class, 'estudiante_id')->with('actividad');
     }
 }

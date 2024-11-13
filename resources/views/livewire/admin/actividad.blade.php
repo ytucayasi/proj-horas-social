@@ -5,6 +5,7 @@ use App\Livewire\Forms\ActividadForm;
 use App\Livewire\Forms\EstudianteForm;
 use App\Models\Actividad;
 use App\Models\Estudiante;
+use App\Models\Log;
 use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -27,6 +28,19 @@ class extends Component {
     public bool $modalExcel = false;
     public $disabledDates = [];
     public $excelFile;
+
+    protected function createLog(string $action, $model, ?array $oldValues = null, ?array $newValues = null)
+    {
+        Log::create([
+            'action' => $action,
+            'model_type' => $model,
+            'model_id' => 1,
+            'old_values' => $oldValues ? json_encode($oldValues) : null,
+            'new_values' => $newValues ? json_encode($newValues) : null,
+            'user_id' => Auth::id(),
+            'ip_address' => request()->ip()
+        ]);
+    }
 
     #[On('createActividad')]
     public function open()
@@ -147,6 +161,10 @@ class extends Component {
     public function delete()
     {
         $this->actividadForm->delete();
+        $this->createLog(
+            'DELETE',
+            model: "ACTIVIDAD"
+        );
         $this->dispatch('pg:eventRefresh-ActividadTable');
         $this->modalDelete = false;
     }
@@ -174,6 +192,10 @@ class extends Component {
     {
         $this->validateForm();
         $this->actividadForm->store();
+        $this->createLog(
+            'CREATE',
+            model: "ACTIVIDAD"
+        );
         $this->resetForm();
         $this->dispatch('pg:eventRefresh-ActividadTable');
         $this->modal = false;
@@ -183,6 +205,10 @@ class extends Component {
     {
         $this->validateForm();
         $this->actividadForm->update();
+        $this->createLog(
+            'UPDATE',
+            model: "ACTIVIDAD"
+        );
         $this->dispatch('pg:eventRefresh-ActividadTable');
         $this->modal = false;
     }

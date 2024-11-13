@@ -7,5 +7,5 @@
 @endphp
 
 <li class="flex w-full h-fit">
-    <a href="{{ $link }}" {{ $attributes->merge(['class' => $classes]) }} wire:navigate>{{ $label }}</a>
+    <a href="{{ $link }}" {{ $attributes->merge(['class' => $classes]) }}>{{ $label }}</a>
 </li>

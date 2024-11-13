@@ -84,6 +84,11 @@ final class EstudianteTable extends PowerGridComponent
         $estudiante = Estudiante::findOrFail($id);
         $this->dispatch('deleteEstudiante', ['estudiante' => $estudiante]);
     }
+    public function mostrarActividades($id)
+    {
+        $estudiante = Estudiante::findOrFail($id);
+        $this->dispatch('mostrarActividades', ['estudiante' => $estudiante]);
+    }
     public function editEstudiante($id)
     {
         $estudiante = Estudiante::findOrFail($id);
@@ -170,6 +175,14 @@ final class EstudianteTable extends PowerGridComponent
                     return Blade::render(<<<HTML
                         @can('eliminar $this->moduleName')
                             <x-mini-button rounded icon="trash" flat gray interaction="negative" wire:click="deleteEstudiante('$estudiante->id')" />
+                        @endcan
+                    HTML);
+                }),
+            Button::add('mostrar_actividades')
+                ->render(function ($estudiante) {
+                    return Blade::render(<<<HTML
+                        @can('mostrar $this->moduleName')
+                            <x-mini-button rounded icon="eye" flat gray interaction="purple" wire:click="mostrarActividades('$estudiante->id')" />
                         @endcan
                     HTML);
                 })
